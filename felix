@@ -1,0 +1,27 @@
+#!/bin/bash
+
+
+echo "FELIX: Producer of Vagrants"
+echo "---------------------------"
+echo
+if [ "$1" != "up" ] ; then
+  echo "usage: felix up"
+  echo
+  echo "- Produces a vagrant instance suitable for development in"
+  exit 1;
+fi
+
+heroku login
+
+[ \! \( -d tmp \) ] && mkdir ./tmp
+tmpfile=$(mktemp tmp/browzine-cms-felix.XXXXXX)
+
+#trap "{ rm $tmpfile; rm dev/keyFileName.txt; }" EXIT
+
+heroku config:get GIT_SSH_KEY --app browzine-cms | base64 --decode > $tmpfile
+
+echo $tmpfile > dev/keyFileName.txt
+
+vagrant up
+
+
